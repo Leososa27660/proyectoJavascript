@@ -118,5 +118,8 @@ else if(opcion.toUpperCase() == "ESPIRITUALIDAD") {
    
   };
 
- 
+ function despedida (){
   alert("Gracias por visitarnos")
+ }
+
+ despedida()
