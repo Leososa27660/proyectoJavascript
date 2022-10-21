@@ -1,195 +1,240 @@
-/* let nombreSueñoA = "Amor"
-let precioSueñoA = "1000"
-let stockSueñoA = 5 */
+// Modificar Nodos
 
-let SueñoA = {
- nombreSueñoA: "Amor",
- precioSueñoA: "1000",
- stockSueñoA: 5
+let prologo = document.getElementById("prologo")
+prologo.innerHTML = "<h2>¿Qué es el creador de sueños?</h2><p >El creador de sueños es un sistema que te va a permitir soñar lo que vos elijas, al tomar antes de dormir una de nuestras pastillas, todo lo que imaginaste se hace realidad.</p><p>Tenemos un banco de más de 20.000 sueños. Hay uno para vos</p>"
+
+// Query Selector
+const btnSwitch = document.querySelector('#switch');
+	
+
+btnSwitch.addEventListener('click',() => {
+	document.body.classList.toggle('dark');
+	btnSwitch.classList.toggle('active');
+});
+
+// Variables
+const baseDeSueños = [
+    {
+        id: 1,
+        nombre: 'Amor',
+        precio: 1000,
+        stock: 100,
+        imagen: 'img/amor.png'
+    },
+    {
+        id: 2,
+        nombre: 'Dinero',
+        precio: 1500,
+        stock: 100,
+        imagen: 'img/dinero.jpg'
+    },
+    {
+        id: 3,
+        nombre: 'Naturaleza',
+        precio: 500,
+        stock: 100,
+        imagen: 'img/naturaleza.jpg'
+    },
+    {
+        id: 4,
+        nombre: 'Deseos',
+        precio: 1800,
+        stock: 100,
+        imagen: 'img/deseos.jpg'
+    },
+    {
+        id: 5,
+        nombre: 'Espiritualidad',
+        precio: 800,
+        stock: 100,
+        imagen: 'img/espiritual.jpg'
+    },
+    {
+        id: 6,
+        nombre: 'Pesadillas',
+        precio: 3000,
+        stock: 100,
+        imagen: 'img/pesadilla.jpg'
+    }
+
+];
+
+let carrito = [];
+const divisa = '$';
+const DOMitems = document.querySelector('#items');
+const DOMcarrito = document.querySelector('#carrito');
+const DOMtotal = document.querySelector('#total');
+const DOMbotonVaciar = document.querySelector('#boton-vaciar');
+
+// Funciones
+
+
+function renderizarProductos() {
+    baseDeSueños.forEach((info) => {
+        
+        const miLista = document.createElement('div');
+        miLista.classList.add('card', 'col-sm-4');
+        
+        const miListaCardBody = document.createElement('div');
+        miListaCardBody.classList.add('card-body');
+    
+        const miListaTitle = document.createElement('h5');
+        miListaTitle.classList.add('card-title');
+        miListaTitle.textContent = info.nombre;
+        
+        const miListaImagen = document.createElement('img');
+        miListaImagen.classList.add('img-fluid');
+        miListaImagen.setAttribute('src', info.imagen);
+
+        const miListaStock = document.createElement("p");
+        miListaStock.classList.add('card-text');
+        miListaStock.innerText = `Stock: ${info.stock}`;
+        
+        const miListaPrecio = document.createElement('p');
+        miListaPrecio.classList.add('card-text');
+        miListaPrecio.textContent = `${info.precio}${divisa}`;
+       
+        const miListaBoton = document.createElement('button');
+        miListaBoton.classList.add('btn', 'btn-primary');
+        miListaBoton.textContent = '+';
+        miListaBoton.setAttribute('marcador', info.id);
+        miListaBoton.addEventListener('click', anyadirProductoAlCarrito);
+        // Insertamos
+        miListaCardBody.appendChild(miListaImagen);
+        miListaCardBody.appendChild(miListaTitle);
+        miListaCardBody.appendChild(miListaPrecio);
+        miListaCardBody.appendChild(miListaBoton);
+        miListaCardBody.appendChild(miListaStock);
+        miLista.appendChild(miListaCardBody);
+        DOMitems.appendChild(miLista);
+    });
 }
 
-/* let nombreSueñoB = "Dinero"
-let precioSueñoB = "500"
-let stockSueñoB = 5 */
+/**
+ * Evento para añadir un sueño al carrito de compras
+ */
+function anyadirProductoAlCarrito(evento) {
+    // Anyadimos el Nodo a nuestro carrito
+    carrito.push(evento.target.getAttribute('marcador'))
+    // Actualizamos el carrito 
+    renderizarCarrito();
 
-let SueñoB = {
-  nombreSueñoB: "Dinero",
-  precioSueñoB: "500",
-  stockSueñoB: 5
- }
-
-function Sueños (nombre,precio,stock){
-this.nombre = nombre;
-this.precio = precio;
-this.stock = stock;
-this.restarStock = function(cantidad){
-  this.stock -= cantidad
-}
 }
 
-/* let SueñoA = new Sueños ("AMor", "1000", 5);
-let SueñoB = new Sueños ("Dinero", "400", 5); */
-let SueñoC = new Sueños ("Naturaleza", "400", 15);
-let SueñoD = new Sueños ("Deseos", "1500", 5);
-let SueñoE = new Sueños ("Espiritualidad", "1500", 0);
-let SueñoF = new Sueños ("Pesadillas", "2000", 5);
+function renderizarCarrito() {
+    DOMcarrito.textContent = '';
+    const carritoSinDuplicados = [...new Set(carrito)];
+    
+    carritoSinDuplicados.forEach((item) => {
+        const miItem = baseDeSueños.filter((itemBaseSueños) => {
+            return itemBaseSueños.id === parseInt(item);
+        });
 
+        // Cuenta el número de veces que se repite el producto
+        const numeroUnidadesItem = carrito.reduce((total, itemId) => {
+            return itemId === item ? total += 1 : total;
+        }, 0);
+        const miLista = document.createElement('li');
+        miLista.classList.add('list-group-item', 'text-right', 'mx-2');
+        miLista.textContent = `${numeroUnidadesItem} x ${miItem[0].nombre} - ${miItem[0].precio}${divisa}`;
+        
+        const miBoton = document.createElement('button');
+        miBoton.classList.add('btn', 'btn-danger', 'mx-5');
+        miBoton.textContent = 'Borrar sueño';
+        miBoton.style.marginLeft = '1rem';
+        miBoton.dataset.item = item;
+        miBoton.addEventListener('click', borrarItemCarrito);
+        miLista.appendChild(miBoton);
+        DOMcarrito.appendChild(miLista);
+    });
+    DOMtotal.textContent = calcularTotal();
+}
 
-let listaSueños = [SueñoA, SueñoB, SueñoC, SueñoD, SueñoE, SueñoF]
-/* listaSueños.length */
+/**
+ * Evento para borrar los sueños
+ */
+function borrarItemCarrito(evento) {
+    const id = evento.target.dataset.item;
+    carrito = carrito.filter((carritoId) => {
+        return carritoId !== id;
+    });
+    
+    renderizarCarrito();
+}
 
-let listaSueñosConStock = listaSueños.filter((sue) => sue.stock > 0)
-
-let listaNombres = listaSueñosConStock.map((prod) => prod.nombre)
-
-/* let listaNombres = [] */
-
-/* for (const sue of listaSueños){
-  listaNombres.push(sue.nombre)
-} */
-
-
-/* let nombreSueñoC = "Naturaleza"
-let precioSueñoC = "400"
-let stockSueñoC = 5 */
-/* 
-let nombreSueñoD = "Deseos"
-let precioSueñoD = "1500"
-let stockSueñoD = 5 */
-
-
-/* class Sueños {
-  constructor(nombre, precio, stock){
-    this.nombre = nombre;
-    this.precio = precio;
-    this.stock = stock;
-  }
-  restarStock(cantidad) {
-    this.stock -= cantidad
-  }
-} */
-
-
-// let nombreSueñoE = "ESpiritualidad"
-// let precioSueñoE = "1500"
-// let stockSueñoE = 5
-
-
-
-// let nombreSueñoF = "Pesadillas"
-// let precioSueñoF = "2000"
-// let stockSueñoF = 5
- 
-
-let precioTotal = 0
-
-function precio(cantidad, precio) {
-  precioTotal += (cantidad * precio)
+/**
+ * Calcular el precio total 
+ */
+function calcularTotal() {
+    return carrito.reduce((total, item) => {
+        const miItem = baseDeSueños.filter((itemBaseSueños) => {
+            return itemBaseSueños.id === parseInt(item);
+        });
+        // suma total
+        return total + miItem[0].precio;
+    }, 0).toFixed(2);
 }
 
 
-alert("Bienvenidos al creador de Sueños")
-
-
-let opcion = prompt ("¿Queres soñar? \n - Si\n - No"); 
-
-
-
-while (opcion != "No"){
-
-  alert ("Nuestros Valores: \n - Amor = 1000 $\n - Dinero = 500 $\n - Naturaleza = 400 $\n - Deseos = 1500 $\n - Espiritualdiad = 1500 $\n - Pesadillas = 2000 $");
-
-  let opcion = prompt ("¿Con que queres soñar? \n " + listaNombres.join ("\n  ") + "\n  Amor \n  Dinero \n - ESC"); 
-
-
-  if(opcion.toUpperCase() == "AMOR") {
-    let cantidadProductoAmor = prompt ("Ingrese la cantidad de sueños sobre " + SueñoA.nombreSueñoA + " que quiere tener:")
-    if(cantidadProductoAmor <= SueñoA.stockSueñoA)
-    {precio(cantidadProductoAmor, SueñoA.precioSueñoA)}
-
-  else{
-    alert("Solo hay " + SueñoA.stockSueñoA + " sueños") 
-   } 
+function vaciarCarrito() {
+    carrito = [];
+    renderizarCarrito();
 }
 
+// Eventos al hacer click
+DOMbotonVaciar.addEventListener('click', vaciarCarrito);
 
-else if(opcion.toUpperCase() == "DINERO") {
-  let cantidadProductoDinero = prompt ("Ingrese la cantidad de sueños sobre " + SueñoB.nombreSueñoB + " que quiere tener:")
-  if(cantidadProductoDinero <= SueñoB.stockSueñoB)
-  {precio (cantidadProductoDinero, SueñoB.precioSueñoB)}
+renderizarProductos();
+renderizarCarrito();
+
+// Json muestra la lista de sueños en consola con Stringify y Parse
+
+
+const enJson = JSON.stringify(baseDeSueños); 
+console.log(enJson);
+
+const sueños = JSON.parse(enJson);
+console.log(baseDeSueños);
+
+
+
+
+
+// function saveCartToStorage(){
+//     localStorage.setItem('cart', JSON.stringify(cart))
+// }
+
+// function loadCartFromStorage(){
+//     if(localStorage.getItem('cart') !== null){
+//         cart = JSON.parse(localStorage.getItem('cart'))
+//     }
+// }
+
+
+
+/* Local storage */
+
+function guardarDatos() {
+    localStorage.nombre = document.getElementById("nombre").value;
+    localStorage.password = document.getElementById("password").value;
+}
+
+function recuperarDatos() {
+    if ((localStorage.nombre != undefined) && (localStorage.password != undefined)) {
+        document.getElementById("datos").innerHTML = "Nombre: " + localStorage.nombre + " Password: " + localStorage.password;
+    } else {
+        document.getElementById("datos").innerHTML = "No has introducido tu nombre y tu password";
+    }
+}
+
+       
+//    let miFormulario = document.getElementById("formulario");
+//     miFormulario.addEventListener("submit", validarFormulario);
+    
+//     function validarFormulario(e) {
+//              e.preventDefault();
+//         console.log("Formulario Enviado")
+//         alert("Mensaje enviado")
   
-else{
-  alert("Solo hay " + SueñoB.stockSueñoB + " sueños")
- } 
-}
 
-
-
-  else if(opcion.toUpperCase() == "NATURALEZA") {
-    let cantidadProductoNaturaleza = prompt ("Ingrese la cantidad de sueños sobre " + SueñoC.nombre + " que quiere tener:")
-    if(cantidadProductoNaturaleza <= SueñoC.stock)
-    {precio(cantidadProductoNaturaleza, SueñoC.precio)
-    }
-   else {
-    alert("Solo hay " + SueñoC.stock + " sueños")
-    SueñoC.restarStock(cantidadProductoNaturaleza)
-   } 
-  }
-
-
-else if(opcion.toUpperCase() == "DESEOS") {
-  let cantidadProductoDeseos = prompt ("Ingrese la cantidad de sueños sobre " + SueñoD.nombre + " que quiere tener:")
-  if(cantidadProductoDeseos <= SueñoD.stock)
-  {precio(cantidadProductoDeseos, SueñoD.precio)
-  }
- else {
-  alert("Solo hay " + SueñoD.stock + " sueños")
-  SueñoD.restarStock(cantidadProductoDeseos)
- } 
-}
-
-
-else if(opcion.toUpperCase() == "ESPIRITUALIDAD") {
-    let cantidadProductoEspiritualidad = prompt ("Ingrese la cantidad de sueños sobre " + SueñoE.nombre + " que quiere tener:")
-    if(cantidadProductoEspiritualidad <= SueñoE.stock)
-    {precio(cantidadProductoEspiritualidad, SueñoE.precio)
-    }
-  else{
-    alert("Solo hay " + SueñoE.stock + "sueños")
-   } 
-  }
- 
-
-  else if(opcion.toUpperCase() == "PESADILLAS") {
-    let cantidadProductoPesadillas = prompt ("Ingrese la cantidad de sueños sobre " + SueñoF.nombre + " que quiere tener:")
-    if(cantidadProductoPesadillas <= SueñoF.stock)
-    {precio(cantidadProductoPesadillas, SueñoF.precio)
-    }
-   else {
-    alert("Solo hay " + SueñoF.stock + "sueños")
-   } 
-  }
-
-
-
-  if (precioTotal != 0){
-    alert("El precio total de sus sueños es de " + precioTotal + " $")
-   }  
-   alert("Gracias por visitarnos")
-  
-   var color = "" 
-   while (color != "DESPERTAR"){ 
-        color = prompt("Escriba DESPERTAR para salir","") 
-   }
-
-
-
-  breack
-   
-};
-
- function despedida (){
-  alert("Gracias por visitarnos")
- }
-
- despedida()
+//      } 
