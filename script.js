@@ -243,7 +243,7 @@ function comprarCarrito() {
 	carrito = [];
 	renderizarCarrito();
 	Swal.fire({
-		title: 'Envia tu usuario o alias para confirmar la compra',
+    html: `<h3>Envia tu usuario o alias para confirmar la compra</h3>`,
 		input: 'text',
 		inputAttributes: {
 			autocapitalize: 'off'
@@ -270,7 +270,7 @@ function comprarCarrito() {
 	}).then((result) => {
 		if (result.isConfirmed) {
 			Swal.fire({
-				title: `${result.value.login}' a confirmado la compra`,
+				html: `${result.value.login}' a confirmado la compra`,
 				imageUrl: result.value.avatar_url
 			})
 		}
